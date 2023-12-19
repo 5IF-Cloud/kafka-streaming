@@ -1,61 +1,16 @@
 services:
-  postgres:
-    image: postgres:13.8-bullseye
-    hostname: postgres
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-      PGDATA: /var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./tmp/postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 5s
-      retries: 5
- 
-  spark-master:
-    container_name: spark-master
-    extends:
-      file: spark-compose.yaml
-      service: spark-master
 
   zookeeper:
     container_name: zookeeper
     extends:
       file: kafka-compose.yaml
       service: zookeeper
-  kafka:
-    container_name: kafka
+  broker:
+    container_name: broker
     extends:
       file: kafka-compose.yaml
-      service: kafka
-
-  namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-    container_name: namenode
-    ports:
-      - "9870:9870"
-    volumes:
-      - ./tmp/hadoop-namenode:/hadoop/dfs/name
-      - ./hadoop/data:/hadoop-data
-    hostname: namenode
-    environment:
-      CLUSTER_NAME: hadoop
-
-  datanode:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    container_name: datanode
-    environment:
-      CLUSTER_NAME: hadoop
-      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
-    volumes:
-      - ./tmp/hadoop-datanode:/hadoop/dfs/data
-    depends_on:
-      - namenode
+      service: broker
 
 networks:
   default:
-    name: meteorif
+    name: debs-network
