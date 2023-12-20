@@ -5,11 +5,11 @@ services:
     extends:
       file: kafka-compose.yaml
       service: zookeeper
-  broker:
-    container_name: broker
+  kafka:
+    container_name: kafka
     extends:
       file: kafka-compose.yaml
-      service: broker
+      service: kafka
 
 networks:
   default:

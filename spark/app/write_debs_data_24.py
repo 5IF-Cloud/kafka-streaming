@@ -8,10 +8,10 @@ from time import sleep
 import json
 
 # Read the data
-df = pd.read_csv('./resources/drivedata-small.csv')
+df = pd.read_csv('../resources/drivedata-small.csv')
 
 # Create a Kafka producer
-producer = KafkaProducer(bootstrap_servers='localhost:9092')
+producer = KafkaProducer(bootstrap_servers='localhost:29092')
 
 # Write the data to the Kafka topic
 
