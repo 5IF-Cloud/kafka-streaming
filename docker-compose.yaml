@@ -1,38 +1,30 @@
 services:
-
   zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    hostname: zookeeper
     container_name: zookeeper
-    extends:
-      file: kafka-compose.yaml
-      service: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka
     container_name: kafka
-    extends:
-      file: kafka-compose.yaml
-      service: kafka
-
-  # namenode:
-  #   image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-  #   container_name: namenode
-  #   ports:
-  #     - "9870:9870"
-  #   volumes:
-  #     - ./tmp/hadoop-namenode:/hadoop/dfs/name
-  #     - ./hadoop/data:/hadoop-data
-  #   hostname: namenode
-  #   environment:
-  #     CLUSTER_NAME: hadoop
-
-  # datanode:
-  #   image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-  #   container_name: datanode
-  #   environment:
-  #     CLUSTER_NAME: hadoop
-  #     CORE_CONF_fs_defaultFS: hdfs://namenode:8020
-  #   volumes:
-  #     - ./tmp/hadoop-datanode:/hadoop/dfs/data
-  #   depends_on:
-  #     - namenode
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092  # Listeners for internal and external connections
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:29092  # Advertise for internal network and host
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT  # No SSL, for simplicity
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL  # Communication between brokers
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 networks:
   default:
