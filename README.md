@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ```
 3. Run the docker-compose file
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 4. Create `debs-topic` in kafka
 ```bash
